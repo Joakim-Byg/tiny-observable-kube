@@ -29,6 +29,14 @@ begin by installing tools:
 * helm
 * (k9s not needed but nice for quality of life reasons)
 
+TL;DR; execute:
+```shell
+./justgivetittome.sh
+```
+If something fails, the rest of the README provides knowledge into each step; and at least you should read step 3 in the
+last section about applications.
+
+Otherwise, follow the below steps 🙂
 
 Create a KinD cluster with two workers and a control node as specified by `./kluster-config.yaml`
 ```shell
