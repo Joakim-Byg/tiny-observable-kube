@@ -102,5 +102,11 @@ sleep 10
 kubectl --context kind-observability apply -f resources/otel/03-otel-collector.yaml
 
 echo "All done!"
-echo "Now all you need is your application and the instrumentation for your particular language stack"
+echo "Now all you need is your application and the instrumentation for your particular language stack (look to resources/otel/04-otel-instrumentation*)"
 echo "Happy coding :-)"
+echo ""
+echo "To enable port-forwarding for e.g. Grafana, do:"
+echo "export GRAFANA_POD_NAME=\$(kubectl get pods --namespace default -l \"app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana\" -o jsonpath=\"{.items[0].metadata.name}\")"
+echo "kubectl --namespace default port-forward \$GRAFANA_POD_NAME 3000"
+echo "The Grafana Web-UI is now available at http://localhost:3000"
+echo ""
