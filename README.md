@@ -21,11 +21,11 @@ The image below illustrates the relationship between the various components - an
 ## Getting started
 
 begin by installing tools:
-* Docker
-* git
 * curl
-* kubectl aka. kubernetes-cli
+* git
+* Docker
 * KinD aka Kubernetes in Docker
+* kubectl aka. kubernetes-cli
 * helm
 * (k9s not needed but nice for quality of life reasons)
 
@@ -36,7 +36,7 @@ kind create cluster --name observability --config=kluster-config.yaml
 ```
 To delete the cluster again call
 ```shell
- kind delete cluster --name observability
+kind delete cluster --name observability
 ```
 
 Now lets look into installing the various components
@@ -54,16 +54,16 @@ __**Notice**__, this is the _single version_ and should not be used for non-loca
    # Check the single-instance is available
    helm search repo vm/victoria-metrics-single -l
    ```
-1. Create the configuration file `values.yaml` (the single version):
+2. Create the configuration file `values.yaml` (the single version):
    ```yaml
    helm show values vm/victoria-metrics-single > resources/grafana/victoria-metrics/generated-values.yaml
    ```
-2. Deploy the Loki cluster using (we have placed our values in `resources/grafana/loki/loki-values.yaml`:
+3. Deploy the Loki cluster using (we have placed our values in `resources/grafana/loki/loki-values.yaml`:
    ```shell
    # Test/dry-run if need be.
-   helm install vmsingle vm/victoria-metrics-single -f values.yaml --namespace default --debug --dry-run
+   helm install vmsingle vm/victoria-metrics-single -f resources/grafana/victoria-metrics/generated-values.yaml --namespace default --debug --dry-run
    # Install with
-   helm install vmsingle vm/victoria-metrics-single -f values.yaml --namespace default
+   helm install vmsingle vm/victoria-metrics-single -f resources/grafana/victoria-metrics/generated-values.yaml --namespace default
    ```
 
 ## Installing Tempo
