@@ -1,0 +1,71 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-prometheus-app
+  namespace: opentelemetry
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tiny-blog
+      app.kubernetes.io/name: go-prom-app
+  template:
+    metadata:
+      labels:
+        app: tiny-blog
+        app.kubernetes.io/name: go-prom-app
+    spec:
+      containers:
+        - name: tiny-blog
+          image: test.netic.dk/tiny-blog:0.3.4
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SERVICE_CONFIG
+              value: /app/configs/service-config.yaml
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=go-prom-app,service.version=0.3.4"
+          ports:
+            - name: prom
+              containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/configs
+      volumes:
+        - name: config-volume
+          configMap:
+            name: tiny-blog-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-prom-app
+  namespace: opentelemetry
+  labels:
+    app: tiny-blog
+    app.kubernetes.io/name: go-prom-app
+spec:
+  selector:
+    app: tiny-blog
+    app.kubernetes.io/name: go-prom-app
+  ports:
+    - name: tiny-blog-port
+      port: 8080
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tiny-blog-config
+  namespace: opentelemetry
+data:
+  "service-config.yaml": |+
+    otel:
+      app:
+        name: "go-prom-app"
+      collector:
+        host: "otelcol-collector.opentelemetry.svc.cluster.local"
+        port: "4317"
+    web:
+      host:
+        port: "8080"
+      static-content-path: "web/static"

@@ -1,0 +1,20 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: instrumentation-py
+  namespace: opentelemetry
+spec:
+  exporter:
+    endpoint: http://otelcol-collector.opentelemetry.svc.cluster.local:4318
+  propagators:
+    - tracecontext
+    - baggage
+  sampler:
+    type: parentbased_traceidratio
+    argument: '1'
+  java:
+    env:
+      - name: OTEL_INSTRUMENTATION_KAFKA_ENABLED
+        value: false
+      - name: OTEL_INSTRUMENTATION_REDISCALA_ENABLED
+        value: false
