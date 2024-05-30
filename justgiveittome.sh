@@ -58,7 +58,7 @@ helm repo update
 # install Victoria Metrics
 echo "Installing VictoriaMetrics ..."
 helm show values vm/victoria-metrics-single > resources/grafana/victoria-metrics/generated-values.yaml
-helm install vmsingle vm/victoria-metrics-single -f resources/grafana/victoria-metrics/generated-values.yaml --namespace default
+helm upgrade --install vmsingle vm/victoria-metrics-single -f resources/grafana/victoria-metrics/generated-values.yaml --kube-context kind-observability
 
 # Installing Tempo
 echo "Installing Tempo ..."
@@ -66,17 +66,17 @@ helm upgrade --install tempo grafana/tempo --kube-context kind-observability
 
 # Installing Grafana
 echo "Installing Grafana ..."
-helm upgrade -f resources/grafana/tempo/single-binary-grafana-values.yaml --install grafana grafana/grafana --kube-context kind-observability
+helm upgrade --install -f resources/grafana/tempo/single-binary-grafana-values.yaml grafana grafana/grafana --kube-context kind-observability
 
 # Installing OpenTelemetry parts
 echo "Installing OpenTelemetry parts ..."
 # Install just ServiceMonitor and PodMonitor
 # NOTE: This GH issue put me on the right track: https://github.com/open-telemetry/opentelemetry-operator/issues/1811#issuecomment-1584128371
-kubectl --context kind-observability apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml
-kubectl --context kind-observability apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --context kind-observability
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml --context kind-observability
 
 # Install cert-manager, since it's a dependency of the OTel Operator
-kubectl --context kind-observability apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml --context kind-observability
 
 # Need to wait for cert-manager to finish before installing the operator
 # Sometimes it takes a couple of minutes for cert-manager pods to come up
@@ -86,20 +86,26 @@ echo "... if curious about who first made this easy; go to Adriana Villelas repo
 sleep 25
 
 # Install operator
-kubectl --context kind-observability apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.94.0/opentelemetry-operator.yaml
+kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.94.0/opentelemetry-operator.yaml --context kind-observability
 
 # Configuring OpenTelemetry RBAC, TargetAllocator & Metric Collector
 echo "Configuring OpenTelemetry RBAC, TargetAllocator & Metric Collector ..."
 
 # Make a namespace for the OTel components
-kubectl --context kind-observability apply -f resources/otel/01-otel-namespace.yaml
+kubectl apply -f resources/otel/01-otel-namespace.yaml --context kind-observability
 
 # Create the roles in the cluster, that OTel is dependant upon
-kubectl --context kind-observability apply -f resources/otel/02-otel-rbac.yaml
+kubectl apply -f resources/otel/02-otel-rbac.yaml --context kind-observability
 sleep 10
 
 # Setup the OTel-collector
-kubectl --context kind-observability apply -f resources/otel/03-otel-collector.yaml
+kubectl apply -f resources/otel/03-otel-collector.yaml --context kind-observability
+
+# Installing promtail log-forwarding and loki for log-collecting
+echo "Installing loki in single instance mode"
+helm upgrade --install --values resources/grafana/loki/loki-single-bin-helm-values.yaml loki grafana/loki --kube-context kind-observability
+echo "Installing promtail as a daemon set, with the configs to loki"
+helm upgrade --install --values resources/grafana/loki/promtail-overrides.yaml promtail grafana/promtail --kube-context kind-observability
 
 echo "All done!"
 echo "Now all you need is your application and the instrumentation for your particular language stack (look to resources/otel/04-otel-instrumentation*)"

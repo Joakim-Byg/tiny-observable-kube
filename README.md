@@ -8,9 +8,10 @@ eventually assist a better troubleshooting situations in a future production con
 This minimal project makes a Grafana explorer available to us. Within grafana we want to monitor our system metrics and 
 system traces; especially we want to, through tinkering get good at creating really informative traces for our 
 microservice and polyglot systems.
-For this we install single-instances of the products tempo and VictoriaMetrics.
+For this we install single-instances of the products loki, tempo and VictoriaMetrics.
+- Loki is used both to collect logs across services and later to explore the logs through Grafana. 
 - VictoriaMetrics is easy to work with and acts as a fully compatible prometheus backend within Grafana.
-- Tempo is the storage componentes needed for our traces.
+- Tempo is the storage components needed for our traces, which is also explorable with Grafana.
 
 Eventually we will bind it together with OpenTelemetry, which today is quite able to instrument and receive traces and 
 scrape metrics in a comparable matter to that of other metric scrapers in the CNCF landscape.
@@ -31,7 +32,7 @@ begin by installing tools:
 
 TL;DR; execute:
 ```shell
-./justgivetittome.sh
+./justgiveittome.sh
 ```
 If something fails, the rest of the README provides knowledge into each step; and at least you should read step 3 in the
 last section about applications.
