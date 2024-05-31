@@ -18,6 +18,7 @@ scrape metrics in a comparable matter to that of other metric scrapers in the CN
 
 The image below illustrates the relationship between the various components - and why we need each of them.
 
+![alt-text](./tiny-kube.png)
 
 ## Getting started
 
