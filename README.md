@@ -5,9 +5,9 @@ observability and troubleshooting tools available during development on our loca
 with these, which may foster us being better at making the correct tracing hooks and metric counters and guages, to 
 eventually assist a better troubleshooting situations in a future production context.
 
-This minimal project makes a Grafana explorer available to us. Within grafana we want to monitor our system metrics and 
-system traces; especially we want to, through tinkering get good at creating really informative traces for our 
-microservice and polyglot systems.
+This minimal project makes a Grafana explorer available to us. Within grafana we want to explore each of our service 
+metrics, service traces and service logs; especially we want to, through tinkering, get good at creating really 
+informative traces for our microservice and polyglot systems.
 For this we install single-instances of the products loki, tempo and VictoriaMetrics.
 - Loki is used both to collect logs across services and later to explore the logs through Grafana. 
 - VictoriaMetrics is easy to work with and acts as a fully compatible prometheus backend within Grafana.
