@@ -1,46 +1,5 @@
 #! /bin/bash
-
-function check_command_is_present() {
-  if ! command -v $1 &> /dev/null
-    then
-        echo "$1: NOT found!"
-        return 1
-    fi
-    echo " ✓ $1: $($1 $2 | head -n1)"
-    return 0
-}
-function check_tools() {
-  missingTools=()
-  check_command_is_present curl --version
-  if [ 0 -lt $? ]; then
-    missingTools+=( "curl" )
-  fi
-  check_command_is_present git --version
-  if [ 0 -lt $? ]; then
-    missingTools+=( "git" )
-  fi
-  check_command_is_present docker --version
-  if [ 0 -lt $? ]; then
-    missingTools+=( "docker" )
-  fi
-  check_command_is_present kind version
-  if [ 0 -lt $? ]; then
-    missingTools+=( "kind" )
-  fi
-  check_command_is_present kubectl version
-  if [ 0 -lt $? ]; then
-    missingTools+=( "kubectl" )
-  fi
-  check_command_is_present helm version
-  if [ 0 -lt $? ]; then
-    missingTools+=( "helm" )
-  fi
-  if [ 0 -lt ${#missingTools[@]} ]; then
-    echo "Following tools are missing [${missingTools[@]}], please install them before running this script again."
-    return 1
-  fi
-  return 0
-}
+source ./scripts/tool-check.sh
 
 check_tools
 if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi
