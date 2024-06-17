@@ -34,11 +34,14 @@ function install_docker(){
 
   # 3) linux post-installs
   echo "post-install processes ..."
-  sudo groupadd docker &> /dev/null
+  if ! grep "^docker:" /etc/group &> /dev/null
+  then
+    sudo groupadd docker &> /dev/null
+  fi
   sudo usermod -aG docker $USER
   newgrp docker
   if [[ "$os" == "debian" ]]; then
-    dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+#    dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     sudo service docker start
   fi
 }
