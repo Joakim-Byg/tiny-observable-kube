@@ -5,7 +5,7 @@ NC='\033[0m'
 
 silent_detection=$1
 
-(! source ../tool-check.sh) || source ./tool-check.sh &> /dev/null
+source ../tool-check.sh&> /dev/null; source ./tool-check.sh &> /dev/null; source ./scripts/tool-check.sh &> /dev/null
 detected_missing_tools=( $(missing_tools "curl" "git" "docker" "kind" "kubectl" "helm") )
 
 tools=("curl" "git" "docker")
