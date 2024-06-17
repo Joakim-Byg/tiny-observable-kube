@@ -7,7 +7,10 @@ function install_docker(){
 
   sudo apt-get install ca-certificates curl
   sudo install -m 0755 -d /etc/apt/keyrings
-  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  os_string=$(cat /etc/issue | head -1 | awk '{print tolower($0)}')
+  os=""
+  if [[ $os_string =~ "debian" ]]; then os="debian"; elif [[ $os_string =~ "ubuntu" ]]; then os="ubuntu"; fi
+  sudo curl -fsSL https://download.docker.com/linux/${os}/gpg -o /etc/apt/keyrings/docker.asc
   sudo chmod a+r /etc/apt/keyrings/docker.asc
 
   # 1.2) Add the repository to Apt sources:
