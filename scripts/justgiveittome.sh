@@ -4,10 +4,14 @@ source ./tool-check.sh
 check_tools
 if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi
 
+base_dir=$(basename "`pwd`")
+folder_prefix="./"
+if [[ "$base_dir" == "wsl2" ]]; then folder_prefix="../../"; elif [[ "$base_dir" == "scripts" ]]; then folder_prefix="../"; fi
+
 #Create a KinD cluster
 cd ..
 echo "Installing KinD with name: observability ..."
-kind create cluster --name observability --config=kluster-config.yaml
+kind create cluster --name observability --config=${folder_prefix}kluster-config.yaml
 
 # Add all repos at once
 echo "Ensuring the helm repositories are available ..."
@@ -17,8 +21,8 @@ helm repo update
 
 # install Victoria Metrics
 echo "Installing VictoriaMetrics ..."
-helm show values vm/victoria-metrics-single > resources/grafana/victoria-metrics/generated-values.yaml
-helm upgrade --install vmsingle vm/victoria-metrics-single -f resources/grafana/victoria-metrics/generated-values.yaml --kube-context kind-observability
+helm show values vm/victoria-metrics-single > ${folder_prefix}resources/grafana/victoria-metrics/generated-values.yaml
+helm upgrade --install vmsingle vm/victoria-metrics-single -f ${folder_prefix}resources/grafana/victoria-metrics/generated-values.yaml --kube-context kind-observability
 
 # Installing Tempo
 echo "Installing Tempo ..."
@@ -26,7 +30,7 @@ helm upgrade --install tempo grafana/tempo --kube-context kind-observability
 
 # Installing Grafana
 echo "Installing Grafana ..."
-helm upgrade --install -f resources/grafana/tempo/single-binary-grafana-values.yaml grafana grafana/grafana --kube-context kind-observability
+helm upgrade --install -f ${folder_prefix}resources/grafana/tempo/single-binary-grafana-values.yaml grafana grafana/grafana --kube-context kind-observability
 
 # Installing OpenTelemetry parts
 echo "Installing OpenTelemetry parts ..."
@@ -52,20 +56,20 @@ kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releas
 echo "Configuring OpenTelemetry RBAC, TargetAllocator & Metric Collector ..."
 
 # Make a namespace for the OTel components
-kubectl apply -f resources/otel/01-otel-namespace.yaml --context kind-observability
+kubectl apply -f ${folder_prefix}resources/otel/01-otel-namespace.yaml --context kind-observability
 
 # Create the roles in the cluster, that OTel is dependant upon
-kubectl apply -f resources/otel/02-otel-rbac.yaml --context kind-observability
+kubectl apply -f ${folder_prefix}resources/otel/02-otel-rbac.yaml --context kind-observability
 sleep 10
 
 # Setup the OTel-collector
-kubectl apply -f resources/otel/03-otel-collector.yaml --context kind-observability
+kubectl apply -f ${folder_prefix}resources/otel/03-otel-collector.yaml --context kind-observability
 
 # Installing promtail log-forwarding and loki for log-collecting
 echo "Installing loki in single instance mode"
-helm upgrade --install --values resources/grafana/loki/loki-single-bin-helm-values.yaml loki grafana/loki --kube-context kind-observability
+helm upgrade --install --values ${folder_prefix}resources/grafana/loki/loki-single-bin-helm-values.yaml loki grafana/loki --kube-context kind-observability
 echo "Installing promtail as a daemon set, with the configs to loki"
-helm upgrade --install --values resources/grafana/loki/promtail-overrides.yaml promtail grafana/promtail --kube-context kind-observability
+helm upgrade --install --values ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml promtail grafana/promtail --kube-context kind-observability
 
 echo "All done!"
 echo "Now all you need is your application and the instrumentation for your particular language stack (look to resources/otel/04-otel-instrumentation*)"

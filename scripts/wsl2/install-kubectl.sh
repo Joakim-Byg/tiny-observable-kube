@@ -5,7 +5,7 @@ function install_kubectl(){
   chmod +x ./kubectl
   sudo mv ./kubectl /usr/local/bin/kubectl
 
-  read -p "Please enter your Windows username" windowsUser
+  read -p "Please enter your Windows username: " windowsUser
 
   mkdir -p ~/.kube
   ln -sf "/mnt/c/users/$windowsUser/.kube/config" ~/.kube/config

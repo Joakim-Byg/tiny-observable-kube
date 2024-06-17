@@ -24,7 +24,7 @@ function install_docker(){
   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   # 3) linux post-installs
-  sudo groupadd docker
+  sudo groupadd docker &> /dev/null
   sudo usermod -aG docker $USER
   newgrp docker
 }
