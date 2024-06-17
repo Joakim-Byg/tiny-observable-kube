@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "curl installation not implemented yet."
+sudo apt-get install curl

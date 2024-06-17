@@ -26,6 +26,9 @@ if [ 0 -lt ${#detected_missing_tools[@]} ]; then
   done
   read -p "Press enter to install (Ctrl+c to escape)";
 
+  echo "Installing tools may require you to enter your root-password ..."
+  sudo apt-get update
+
   if [[ ${detected_missing_tools[@]} =~ "curl" ]]; then
     echo "Installing curl"
     ./install-curl.sh
