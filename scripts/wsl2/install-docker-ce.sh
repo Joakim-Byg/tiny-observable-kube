@@ -26,10 +26,13 @@ function install_docker(){
     sudo apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     sudo apt-get autoremove
     sudo apt-get autoclean
+    sudo apt-get install docker-ce
+    sudo service docker stop
+    sudo dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     # from https://github.com/Microsoft/WSL/issues/2288
-    if ([ -x "/etc/init.d/docker" ] || [ -e "/etc/init/docker.conf" ]) && [ "$1" = remove ]; then
-      invoke-rc.d docker stop || exit $?
-    fi
+#    if ([ -x "/etc/init.d/docker" ] || [ -e "/etc/init/docker.conf" ]) && [ "$1" = remove ]; then
+#      invoke-rc.d docker stop || exit $?
+#    fi
   fi
 
   echo "Installing ..."
