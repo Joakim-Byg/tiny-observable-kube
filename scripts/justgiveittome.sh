@@ -5,6 +5,7 @@ check_tools
 if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi
 
 #Create a KinD cluster
+cd ..
 echo "Installing KinD with name: observability ..."
 kind create cluster --name observability --config=kluster-config.yaml
 
