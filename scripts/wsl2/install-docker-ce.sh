@@ -23,20 +23,20 @@ function install_docker(){
   # 2) install docker-ce
   if [[ "$os" == "debian" ]]; then
     echo "Cleanup before install"
-    sudo apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+#    sudo apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     sudo apt-get autoremove
     sudo apt-get autoclean
-    sudo apt-get install docker-ce
-    sudo service docker stop
-    sudo dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     # from https://github.com/Microsoft/WSL/issues/2288
-#    if ([ -x "/etc/init.d/docker" ] || [ -e "/etc/init/docker.conf" ]) && [ "$1" = remove ]; then
-#      invoke-rc.d docker stop || exit $?
-#    fi
+    if ([ -x "/etc/init.d/docker" ] || [ -e "/etc/init/docker.conf" ]) && [ "$1" = remove ]; then
+      sudo invoke-rc.d docker stop || exit $?
+    fi
+    echo "Installing ..."
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo invoke-rc.d docker stop
+    sudo dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  else
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
   fi
-
-  echo "Installing ..."
-  sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   # 3) linux post-installs
   echo "post-install processes ..."
