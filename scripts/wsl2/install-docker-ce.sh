@@ -15,16 +15,29 @@ function install_docker(){
 
   # 1.2) Add the repository to Apt sources:
   echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/${os} \
     $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
   sudo apt-get update
 
   # 2) install docker-ce
+  if [[ "$os" == "debian" ]]; then
+    current_user=$USER
+    sudo su
+    apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    apt-get autoremove
+    apt-get autoclean
+    su ${current_user}
+    export RUNLEVEL=1
+  fi
   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   # 3) linux post-installs
   sudo groupadd docker &> /dev/null
   sudo usermod -aG docker $USER
   newgrp docker
+  if [[ "$os" == "debian" ]]; then
+    dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo service docker start
+  fi
 }
