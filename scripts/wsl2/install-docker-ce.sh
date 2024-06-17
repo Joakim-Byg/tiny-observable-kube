@@ -23,9 +23,9 @@ function install_docker(){
   # 2) install docker-ce
   if [[ "$os" == "debian" ]]; then
     echo "Cleanup before install"
-    apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    apt-get autoremove
-    apt-get autoclean
+    sudo apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo apt-get autoremove
+    sudo apt-get autoclean
     export RUNLEVEL=1
   fi
 
