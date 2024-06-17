@@ -26,7 +26,6 @@ function install_docker(){
     sudo apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     sudo apt-get autoremove
     sudo apt-get autoclean
-    export RUNLEVEL=1
   fi
 
   echo "Installing ..."
@@ -42,6 +41,8 @@ function install_docker(){
   newgrp docker
   if [[ "$os" == "debian" ]]; then
 #    dpkg-reconfigure docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    echo "Starting docker service ..."
+    sleep 2
     sudo service docker start
   fi
 }
