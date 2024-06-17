@@ -1,5 +1,5 @@
 #! /bin/bash
-source ./scripts/tool-check.sh
+source ./tool-check.sh
 
 check_tools
 if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi

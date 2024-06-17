@@ -1,32 +1,33 @@
 #!/bin/bash
 
+silent_detection=$1
+
 source ../tool-check.sh
 detected_missing_tools=( $(missing_tools "curl" "git" "docker" "kind" "kubectl" "helm") )
 
 tools=("curl" "git" "docker")
-for val in "${tools[@]}"
-do
-  if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-    echo " ✓ $val: $($val --version 2>&1 | head -n1)"
-  fi
-done
-tools=("kind" "kubectl" "helm")
-for val in "${tools[@]}"
-do
-  if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-    echo " ✓ $val: $($val version 2>&1 | head -n1)"
-  fi
-done
+if [ -z "$silent_detection" ]; then
+  for val in "${tools[@]}"
+  do
+    if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
+      echo " ✓ $val: $($val --version 2>&1 | head -n1)"
+    fi
+  done
+  tools=("kind" "kubectl" "helm")
+  for val in "${tools[@]}"
+  do
+    if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
+      echo " ✓ $val: $($val version 2>&1 | head -n1)"
+    fi
+  done
+fi
 
 if [ 0 -lt ${#detected_missing_tools[@]} ]; then
-  echo "The following tools are missing:"
-  for missing in "${detected_missing_tools[@]}"
-  do
-    echo "$missing"
-  done
-  read -p "Press enter to install (Ctrl+c to escape)";
 
-  echo "Installing tools may require you to enter your root-password ..."
+  detected_missing_tools_str="${detected_missing_tools[*]}"
+  read -p "Press enter to install [${detected_missing_tools_str// /", "}] (Ctrl+c to escape)";
+
+  echo "Installing tools may require you to enter your Windows username and/or root-password ..."
   sudo apt-get update
 
   if [[ ${detected_missing_tools[@]} =~ "curl" ]]; then

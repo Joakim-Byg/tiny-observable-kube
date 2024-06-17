@@ -36,11 +36,15 @@ function check_tools() {
   done
 
   if [ 0 -lt ${#detected_missing_tools[@]} ]; then
-    detected_missing_tools_str="${detected_missing_tools[*]}"
-    echo "Please install [${detected_missing_tools_str// /", "}] before running this script again."
-    echo "If on Windows, please refer to the 'scripts/wsl2' folder;"
-    echo "from here you can run the 'install-tools.sh' script to get assistance on installing the various tools"
-    return 1
+    if [ $(uname -r | sed -n 's/.*\( *Microsoft *\).*/\1/ip') ];
+    then
+      ./wsl2/install-missing_tools.sh silent
+      return 0
+    else
+      detected_missing_tools_str="${detected_missing_tools[*]}"
+      echo "Please install [${detected_missing_tools_str// /", "}] before running this script again."
+      return 1
+    fi
   fi
   return 0
 }
