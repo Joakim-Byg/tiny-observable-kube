@@ -1,8 +1,11 @@
 #!/bin/bash
 
+GREEN='\033[0;32m'
+NC='\033[0m'
+
 silent_detection=$1
 
-source ../tool-check.sh
+(! source ../tool-check.sh) || source ./tool-check.sh &> /dev/null
 detected_missing_tools=( $(missing_tools "curl" "git" "docker" "kind" "kubectl" "helm") )
 
 tools=("curl" "git" "docker")
@@ -10,14 +13,14 @@ if [ -z "$silent_detection" ]; then
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-      echo " ✓ $val: $($val --version 2>&1 | head -n1)"
+      echo -e " ${GREEN}\U2713${NC} $val: $($val --version 2>&1 | head -n1)"
     fi
   done
   tools=("kind" "kubectl" "helm")
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-      echo " ✓ $val: $($val version 2>&1 | head -n1)"
+      echo -e " ${GREEN}\U2713${NC} $val: $($val version 2>&1 | head -n1)"
     fi
   done
 fi
