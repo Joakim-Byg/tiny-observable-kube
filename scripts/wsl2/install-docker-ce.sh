@@ -22,17 +22,18 @@ function install_docker(){
 
   # 2) install docker-ce
   if [[ "$os" == "debian" ]]; then
-    current_user=$USER
-    sudo su
+    echo "Cleanup before install"
     apt-get remove docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     apt-get autoremove
     apt-get autoclean
-    su ${current_user}
     export RUNLEVEL=1
   fi
+
+  echo "Installing ..."
   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
   # 3) linux post-installs
+  echo "post-install processes ..."
   sudo groupadd docker &> /dev/null
   sudo usermod -aG docker $USER
   newgrp docker
