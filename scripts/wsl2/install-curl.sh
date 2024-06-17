@@ -1,3 +1,5 @@
 #!/bin/bash
 
-sudo apt-get install curl
+function install_curl(){
+  sudo apt-get install curl
+}
