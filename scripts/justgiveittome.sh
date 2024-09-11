@@ -1,12 +1,12 @@
 #! /bin/bash
-source ./tool-check.sh
-
-check_tools
-if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi
-
 base_dir=$(basename "`pwd`")
 folder_prefix="./"
 if [[ "$base_dir" == "wsl2" ]]; then folder_prefix="../../"; elif [[ "$base_dir" == "scripts" ]]; then folder_prefix="../"; fi
+
+source ${folder_prefix}/scripts/tool-check.sh
+
+check_tools
+if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi
 
 #Create a KinD cluster
 cd ..
