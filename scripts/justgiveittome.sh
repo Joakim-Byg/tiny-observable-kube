@@ -9,8 +9,7 @@ check_tools
 if [ 0 -lt $? ]; then echo "Exit..."; exit 1; fi
 
 #Create a KinD cluster
-cd ..
-echo "Installing KinD with name: observability ..."
+echo "Installing KinD with name: observability from config: ${folder_prefix}kluster-config.yaml ..."
 kind create cluster --name observability --config=${folder_prefix}kluster-config.yaml
 
 # Add all repos at once
