@@ -25,6 +25,10 @@ spec:
             scrape_interval: 30s
             static_configs:
             - targets: [ '0.0.0.0:8888' ]
+          - job_name: 'app-metrics'
+            scrape_interval: 1s
+            static_configs:
+            - targets: [ '0.0.0.0:8081' ]
         target_allocator:
           endpoint: http://otelcol-targetallocator.opentelemetry.svc.cluster.local
           interval: 30s
@@ -53,7 +57,7 @@ spec:
           exporters: [otlphttp]
         metrics:
           receivers: [prometheus]
-          processors: []
+          processors: [batch]
           exporters: [prometheusremotewrite]
 
 # Look to https://github.com/lightstep/opentelemetry-examples/blob/main/config/example-collector-config.yaml for more configs

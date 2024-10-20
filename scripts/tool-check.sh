@@ -24,19 +24,19 @@ function check_tools() {
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-      echo -e " ${GREEN}\U2713${NC} $val: $($val --version 2>&1 | head -n1)"
+      echo -e " ${GREEN}✓${NC} $val: $($val --version 2>&1 | head -n1)"
     fi
   done
   tools=("kind" "kubectl" "helm")
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-      echo -e " ${GREEN}\U2713${NC} $val: $($val version 2>&1 | head -n1)"
+      echo -e " ${GREEN}✓${NC} $val: $($val version 2>&1 | head -n1)"
     fi
   done
   for missing in "${detected_missing_tools[@]}"
   do
-    echo -e " ${RED}\U2298${NC} $missing: NOT present"
+    echo -e " ${RED}⊘${NC} $missing: NOT present"
   done
 
   if [ 0 -lt ${#detected_missing_tools[@]} ]; then

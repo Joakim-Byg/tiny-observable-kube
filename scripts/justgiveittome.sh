@@ -20,6 +20,7 @@ helm repo update
 
 # install Victoria Metrics
 echo "Installing VictoriaMetrics ..."
+mkdir ${folder_prefix}resources/grafana/victoria-metrics
 helm show values vm/victoria-metrics-single > ${folder_prefix}resources/grafana/victoria-metrics/generated-values.yaml
 helm upgrade --install vmsingle vm/victoria-metrics-single -f ${folder_prefix}resources/grafana/victoria-metrics/generated-values.yaml --kube-context kind-observability
 
@@ -68,6 +69,7 @@ kubectl apply -f ${folder_prefix}resources/otel/03-otel-collector.yaml --context
 echo "Installing loki in single instance mode"
 helm upgrade --install --values ${folder_prefix}resources/grafana/loki/loki-single-bin-helm-values.yaml loki grafana/loki --kube-context kind-observability
 echo "Installing promtail as a daemon set, with the configs to loki"
+helm show values grafana/promtail > ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml
 helm upgrade --install --values ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml promtail grafana/promtail --kube-context kind-observability
 
 echo "All done!"

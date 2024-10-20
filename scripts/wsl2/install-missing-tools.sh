@@ -13,14 +13,14 @@ if [ -z "$silent_detection" ]; then
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-      echo -e " ${GREEN}\U2713${NC} $val: $($val --version 2>&1 | head -n1)"
+      echo -e " ${GREEN}✓${NC} $val: $($val --version 2>&1 | head -n1)"
     fi
   done
   tools=("kind" "kubectl" "helm")
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then
-      echo -e " ${GREEN}\U2713${NC} $val: $($val version 2>&1 | head -n1)"
+      echo -e " ${GREEN}✓${NC} $val: $($val version 2>&1 | head -n1)"
     fi
   done
 fi
