@@ -18,7 +18,7 @@ function check_tools() {
   GREEN='\033[0;32m'
   NC='\033[0m'
 
-  detected_missing_tools=( $(missing_tools "curl" "git" "docker" "kind" "kubectl" "helm") )
+  detected_missing_tools=( $(missing_tools "kustomize" "curl" "git" "docker" "kind" "kubectl" "helm") )
   echo "missing tools: $detected_missing_tools"
   tools=("curl" "git" "docker")
   for val in "${tools[@]}"
@@ -27,7 +27,7 @@ function check_tools() {
       echo -e " ${GREEN}✓${NC} $val: $($val --version 2>&1 | head -n1)"
     fi
   done
-  tools=("kind" "kubectl" "helm")
+  tools=("kind" "kubectl" "helm" "kustomize")
   for val in "${tools[@]}"
   do
     if [[ ! ${detected_missing_tools[@]} =~ $val ]]; then

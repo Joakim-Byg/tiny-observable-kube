@@ -36,11 +36,12 @@ helm upgrade --install -f ${folder_prefix}resources/grafana/tempo/single-binary-
 echo "Installing OpenTelemetry parts ..."
 # Install just ServiceMonitor and PodMonitor
 # NOTE: This GH issue put me on the right track: https://github.com/open-telemetry/opentelemetry-operator/issues/1811#issuecomment-1584128371
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --context kind-observability
-kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.71.2/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml --context kind-observability
+# I found the latest version with: LATEST_PROM_MON_VER=$(curl -s https://api.github.com/repos/prometheus-operator/prometheus-operator/releases/latest | jq -cr .tag_name)
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.85.0/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml --context kind-observability
+kubectl apply -f https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.85.0/example/prometheus-operator-crd/monitoring.coreos.com_podmonitors.yaml --context kind-observability
 
 # Install cert-manager, since it's a dependency of the OTel Operator
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.14.3/cert-manager.yaml --context kind-observability
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml --context kind-observability
 
 # Need to wait for cert-manager to finish before installing the operator
 # Sometimes it takes a couple of minutes for cert-manager pods to come up
@@ -50,7 +51,7 @@ echo "... if curious about who first made this easy; go to Adriana Villelas repo
 sleep 25
 
 # Install operator
-kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.94.0/opentelemetry-operator.yaml --context kind-observability
+kubectl apply -f https://github.com/open-telemetry/opentelemetry-operator/releases/download/v0.131.0/opentelemetry-operator.yaml --context kind-observability
 
 # Configuring OpenTelemetry RBAC, TargetAllocator & Metric Collector
 echo "Configuring OpenTelemetry RBAC, TargetAllocator & Metric Collector ..."
@@ -68,9 +69,13 @@ kubectl apply -f ${folder_prefix}resources/otel/03-otel-collector.yaml --context
 # Installing promtail log-forwarding and loki for log-collecting
 echo "Installing loki in single instance mode"
 helm upgrade --install --values ${folder_prefix}resources/grafana/loki/loki-single-bin-helm-values.yaml loki grafana/loki --kube-context kind-observability
-echo "Installing promtail as a daemon set, with the configs to loki"
-helm show values grafana/promtail > ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml
-helm upgrade --install --values ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml promtail grafana/promtail --kube-context kind-observability
+
+echo "Installing grafana alloy, linked to loki and victoria metrics"
+helm upgrade --install --values ${folder_prefix}resources/grafana/alloy/values.yaml alloy grafana/alloy --kube-context kind-observability
+#echo "Installing promtail as a daemon set, with the configs to loki"
+#helm show values grafana/promtail > ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml
+#helm upgrade --install --values ${folder_prefix}resources/grafana/loki/promtail-overrides.yaml promtail grafana/promtail --kube-context kind-observability
+
 
 echo "All done!"
 echo "Now all you need is your application and the instrumentation for your particular language stack (look to resources/otel/04-otel-instrumentation*)"

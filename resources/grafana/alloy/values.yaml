@@ -1,0 +1,37 @@
+cluster:
+  name: observability
+  namespace: default
+
+externalServices:
+  prometheus:
+    host: http://vmsingle-victoria-metrics-single-server.default.svc.cluster.local:8428/api/v1/write
+  loki:
+    host: http://loki.default.svc.cluster.local:3100/loki/api/v1/push
+#    host: <loki-hostname>:<port>
+
+  metrics:
+  enabled: true
+  cost:
+    enabled: false
+  node-exporter:
+    enabled: true
+logs:
+  enabled: true
+  pod_logs:
+    enabled: true
+  cluster_events:
+    enabled: true
+  node_events:
+    enabled: true
+traces:
+  enabled: false
+opencost:
+  enabled: false
+kube-state-metrics:
+  enabled: true
+prometheus-node-exporter:
+  enabled: true
+prometheus-operator-crds:
+  enabled: true
+grafana-agent: {}
+grafana-agent-logs: {}
